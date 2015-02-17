@@ -23,105 +23,153 @@
 	- the provisions above, a recipient may use your version of this file under 
 	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
 	BLOCK ***** -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.dcm4chee</groupId>
-	<artifactId>dcm4chee-conf-web</artifactId>
-	<packaging>war</packaging>
-	<name>Configuration manager</name>
-	<version>1.0.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.dcm4chee</groupId>
+    <artifactId>dcm4chee-conf-web</artifactId>
+    <packaging>war</packaging>
+    <name>Configuration manager</name>
+    <version>1.0.0-SNAPSHOT</version>
     <properties>
-		<dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
+        <dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
         <serviceManager.enabled>true</serviceManager.enabled>
-		<browser.security.enabled.l />
-		<browser.security.enabled.r />
-        <asb/>
+        <browser.security.enabled.l/>
+        <browser.security.enabled.r/>
+        <config.classifier></config.classifier>
+        <classifier></classifier>
     </properties>
     <profiles>
-		<profile>
-			<id>asb</id>
-			<properties>
-				<asb>-asb</asb>
-			</properties>
-		</profile>
-		<profile>
+        <profile>
+            <id>asb</id>
+            <properties>
+                <config.classifier>-asb</config.classifier>
+                <classifier>-asb</classifier>
+            </properties>
+        </profile>
 
-			<id>security-disabled</id>
-			<properties>
-				<browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
-				<browser.security.enabled.r>--&gt;</browser.security.enabled.r>
-			</properties>
+        <profile>
+            <id>arc</id>
+            <properties>
+                <classifier>-arc</classifier>
+            </properties>
+        </profile>
 
-		</profile>
+        <profile>
+            <id>xds</id>
+            <properties>
+                <config.classifier>-xds</config.classifier>
+                <classifier>-xds</classifier>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>standalone</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${basedir}/src-standalone</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>security-disabled</id>
+            <properties>
+                <browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
+                <browser.security.enabled.r>--&gt;</browser.security.enabled.r>
+            </properties>
+        </profile>
     </profiles>
-	<dependencies>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>2.3.1</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-conf-api</artifactId>
+            <version>${dcm4che.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-conf-core</artifactId>
+            <version>${dcm4che.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4che-conf-api</artifactId>
-			<version>${dcm4che.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4che-conf-core</artifactId>
-			<version>${dcm4che.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
             <version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <version>4.12</version>
-			<scope>test</scope>
-		</dependency>		
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
             <version>1.0.2.Final</version>
-			<scope>provided</scope>
-		</dependency>
-
-
-	</dependencies>
-	<build>
-                <filters>
-                    <filter>browser${asb}.properties</filter>
-                </filters>
-		<plugins>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<directory>src/main/webapp</directory>
-							<filtering>true</filtering>
-						</resource>
-					</webResources>
-				</configuration>
-			</plugin>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <filters>
+            <filter>browser${config.classifier}.properties</filter>
+        </filters>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <classifier>${classifier}</classifier>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.dcm4che.conf.core, org.dcm4che.conf.api, org.dcm4che.conf.api-hl7, org.dcm4che.net-audit, org.dcm4che.net-imageio, org.dcm4che.net-hl7</Dependencies>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -132,7 +180,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-		</plugins>
+        </plugins>
 
-	</build>
+    </build>
 </project>

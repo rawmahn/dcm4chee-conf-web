@@ -91,9 +91,9 @@
     <div class="container">
 
         <span class="navbar-group">
-            <span class="navbar-text"><strong>{:: appName}}</strong></span>
+            <span class="navbar-text"><strong>{:: appConfiguration.appName}}</strong></span>
             <a class="btn navbar-btn btn-primary" href="#/service-manager">Configuration</a>
-            <a class="btn navbar-btn btn-primary" href="#/step/0">Registry browser</a>
+            <a ng-show="appConfiguration.xdsBrowser" class="btn navbar-btn btn-primary" href="#/step/0">Registry browser</a>
         </span>
 
         <div class="nav navbar-right">

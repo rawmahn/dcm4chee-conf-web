@@ -113,6 +113,7 @@ public class ConfigRESTServicesServlet {
 
 
     @Inject
+    @Manager
     DicomConfigurationManager configurationManager;
 
     @GET

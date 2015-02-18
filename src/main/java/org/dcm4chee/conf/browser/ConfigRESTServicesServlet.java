@@ -296,7 +296,7 @@ public class ConfigRESTServicesServlet {
         String connectedDeviceUrl = System.getProperty("org.dcm4chee.device." + deviceName);
 
         if (connectedDeviceUrl == null)
-            throw new ConfigurationException("The device is not controlled (connected), please inspect the JBoss configuration");
+            throw new ConfigurationException("Device "+deviceName+" is not controlled (connected), please inspect the JBoss configuration");
 
         if (!connectedDeviceUrl.startsWith("http")) {
             URL url = null;

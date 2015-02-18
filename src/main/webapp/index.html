@@ -32,7 +32,7 @@
     <script src="config-browser/confignode.js"></script>
     <script src="config.js"></script>
 
-    <link ng-if="appConfiguration.useNICETheme" rel="stylesheet" href="lib_other/bootstrap/css/nice.1.9.css">
+    <link ng-if="appConfiguration.useNICETheme" rel="stylesheet" href="3rdparty/bootstrap/css/nice.1.9.css">
 
 
     <title>xds repo browser</title>
@@ -79,7 +79,7 @@
     <div class="container">
 
         <span class="navbar-group">
-            <span class="navbar-text"><strong>{:: appConfiguration.appName}}</strong></span>
+            <span class="navbar-text"><strong>{{:: appConfiguration.appName}}</strong></span>
             <a class="btn navbar-btn btn-primary" href="#/service-manager">Configuration</a>
             <a ng-show="appConfiguration.xdsBrowser" class="btn navbar-btn btn-primary" href="#/step/0">Registry browser</a>
         </span>
@@ -102,15 +102,14 @@
 
     </div>
 </div>
-
 <div class="container">
     <div class="row">
         <div ng-view></div>
     </div>
 </div>
 
-<!--<link rel="stylesheet" href="agility-xds-config/xds-config.css">-->
-<!--<script type="text/javascript" src="agility-xds-config/xds-config.js"></script>-->
-${extraScripts}
+<!-- Injected by maven -->
+<!-- ${extraScripts} -->
+
 </body>
 </html>

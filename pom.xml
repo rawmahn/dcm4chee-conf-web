@@ -137,6 +137,7 @@
         </profile>
         <profile>
             <id>security-disabled</id>
+            <activation><activeByDefault>true</activeByDefault></activation>
             <properties>
                 <browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
                 <browser.security.enabled.r>--&gt;</browser.security.enabled.r>

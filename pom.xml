@@ -37,8 +37,9 @@
         <serviceManager.enabled>true</serviceManager.enabled>
         <browser.security.enabled.l/>
         <browser.security.enabled.r/>
-        <config.classifier></config.classifier>
-        <classifier></classifier>
+        <config.classifier/>
+        <classifier/>
+        <security.classifier/>
 
         <!-- Only for standalone mode when the actual configuration classes are not available -->
         <standalone.dcm4chee-arc-conf.version>4.4.0-SNAPSHOT</standalone.dcm4chee-arc-conf.version>
@@ -139,6 +140,7 @@
             <id>security-disabled</id>
             <activation><activeByDefault>true</activeByDefault></activation>
             <properties>
+                <security.classifier>-unsecure</security.classifier>
                 <browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
                 <browser.security.enabled.r>--&gt;</browser.security.enabled.r>
             </properties>
@@ -209,7 +211,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
-                    <classifier>${classifier}</classifier>
+                    <classifier>${classifier}${security.classifier}</classifier>
                     <webResources>
                         <resource>
                             <directory>src/main/webapp</directory>

@@ -1,6 +1,6 @@
 var xdsREST = angular.module('dcm4che.xds.REST', []);
 
-xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', function(appNotifications, appHttp) {
+xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', 'appConfiguration', function(appNotifications, appHttp, appConfiguration) {
 
     console.log("Loading config...");
 
@@ -8,11 +8,12 @@ xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', function(appNotifi
     var patientIds = [];
 
 	var config = {
-		xdsAccessibleRepos : function() { return xdsAccessibleRepos },
+        xdsRestPath: appConfiguration.xdsRestPath ? appConfiguration.xdsRestPath : 'data/',
+        xdsAccessibleRepos : function() { return xdsAccessibleRepos },
         patientIds: function() { return patientIds }
 	};
 
-	appHttp.get("data/reg/allowedRepos", null, function(data, status) {
+	appHttp.get(config.xdsRestPath+"reg/allowedRepos", null, function(data, status) {
         xdsAccessibleRepos = data;
 
 /*        appNotifications.showNotification({
@@ -28,7 +29,7 @@ xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', function(appNotifi
 		})
 	});
 
-    appHttp.get("data/reg/patients/", null, function(data, status) {
+    appHttp.get(config.xdsRestPath+"reg/patients/", null, function(data, status) {
 
         patientIds = data;
 
@@ -49,7 +50,7 @@ xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', function(appNotifi
 
 } ]);
 
-xdsREST.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', function(appHttp, appNotifications) {
+xdsREST.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', 'xdsConfig', function(appHttp, appNotifications, xdsConfig) {
 
 	var xdsAdhocQuery = {};
 
@@ -101,7 +102,7 @@ xdsREST.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', function(appHt
 			"maxResults" : -1
 		};
 
-		appHttp.post("data/reg/query/", request, callback, function(data, status) {
+		appHttp.post(xdsConfig.xdsRestPath+"reg/query/", request, callback, function(data, status) {
 			appNotifications.showNotification({
 				level : "danger",
 				text : "Could not execute adhoc query",
@@ -114,7 +115,7 @@ xdsREST.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', function(appHt
 	return xdsAdhocQuery;
 } ]);
 
-xdsREST.factory('xdsDeleteObjectsQuery', [ 'appHttp', 'appNotifications', function(appHttp, appNotifications) {
+xdsREST.factory('xdsDeleteObjectsQuery', [ 'appHttp', 'appNotifications', 'xdsConfig', function(appHttp, appNotifications, xdsConfig) {
 
 	return {
 
@@ -144,7 +145,7 @@ xdsREST.factory('xdsDeleteObjectsQuery', [ 'appHttp', 'appNotifications', functi
             };
 
             // make rest call
-            appHttp.post("data/reg/delete/", request, function (data, status) {
+            appHttp.post(xdsConfig.xdsRestPath+"reg/delete/", request, function (data, status) {
                 callback(true);
                 appNotifications.showNotification({
                     level: "success",

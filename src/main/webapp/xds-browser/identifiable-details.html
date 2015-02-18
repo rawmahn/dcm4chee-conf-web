@@ -5,7 +5,7 @@
 		<!-- show download link for document entries -->
         <div ng-show="type == 'XDSDocumentEntry' && showDocumentDownload" class="pull-right">
             <a class="btn btn-success"
-               ng-href="data/repo/retrieve-download/{{docRepoId}}/{{docUniqueId}}"
+               ng-href="{{xdsRestPath}}repo/retrieve-download/{{docRepoId}}/{{docUniqueId}}"
                role="button" target="_blank">Download</a>
         </div>
         <div ng-show="type == 'XDSSubmissionSet'" class="pull-right">

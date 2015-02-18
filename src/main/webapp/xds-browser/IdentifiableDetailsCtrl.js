@@ -3,6 +3,8 @@ controller('IdentifiableDetailsCtrl',
 		[ '$scope', '$http', 'xdsConstants', 'xdsAdhocQuery', 'xdsGetEntityType', 'xdsEb','xdsConfig','browserLinkedViewXdsService', 'xdsDeleteObjectsQuery',
         function($scope, $http, xdsConstants, xdsAdhocQuery, xdsGetEntityType,xdsEb, xdsConfig, browserLinkedViewXdsService, xdsDeleteObjectsQuery) {
 
+            $scope.xdsRestPath = xdsConfig.xdsRestPath;
+
 	// gotta watch if it changes
 	$scope.$watch('currentIdentifiable', function() {
 

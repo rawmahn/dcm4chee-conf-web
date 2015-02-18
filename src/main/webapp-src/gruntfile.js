@@ -32,7 +32,8 @@ module.exports = function (grunt) {
         wiredep: {
             app: {
                 src: [appConfig.indexPath],
-                ignorePath:  /\.\.\//
+                ignorePath:  /\.\.\//,
+                exclude: [ /lib\/bootstrap\/.*/ ]
             }
         },
 
@@ -43,7 +44,7 @@ module.exports = function (grunt) {
                     src: appConfig.srcPath,
                     dest: appConfig.distPath,
                     wiredep: {
-                        exclude: ['\.js$', '\.less$']
+                        exclude: ['\.js$', '\.less$', /lib\/bootstrap\/.*/]
                     }
                 }
             }
@@ -58,11 +59,6 @@ module.exports = function (grunt) {
                     cwd: appConfig.srcPath,
                     dest: appConfig.distPath,
                     src: ['**/*', '!lib/**/*', '!**/.gitignore', '!**/nice.*.css']
-                }, { // bootstrap fonts
-                    expand: true,
-                    cwd: appConfig.srcPath,
-                    src: 'lib/bootstrap/dist/fonts/**/*',
-                    dest: appConfig.distPath
                 }]
             }
         },

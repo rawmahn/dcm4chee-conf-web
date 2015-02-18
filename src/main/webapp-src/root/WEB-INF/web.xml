@@ -20,8 +20,7 @@
         <web-resource-collection>
             <web-resource-name>Stylesheets and libs</web-resource-name>
             <url-pattern>/dcm4che-web-common/css/login.css</url-pattern>
-            <url-pattern>/lib/bootstrap/css/bootstrap.css</url-pattern>
-            <url-pattern>/lib/bootstrap/css/bootstrap.css.map</url-pattern>
+            <url-pattern>/3rdparty/bootstrap/css/bootstrap.css</url-pattern>
             <url-pattern>/lib/libs.js</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>

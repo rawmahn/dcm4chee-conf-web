@@ -18,7 +18,6 @@ echo "Building..."
 mvn clean install -P security-disabled,arc
 
 echo "Deploying..."
-cd dcm4chee-xds2-registry-ear
 mvn deploy -P security-disabled,arc
 
 echo "Committing, tagging, reverting ..." 

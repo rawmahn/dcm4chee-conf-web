@@ -1,5 +1,6 @@
 angular.module('dcm4che.config.core', [])
     .directive("confignode", function (RecursionHelper, ConfigEditorService, $filter) {
+        var cache = {};
         return {
             scope: {
                 editor: '=',
@@ -77,7 +78,8 @@ angular.module('dcm4che.config.core', [])
             compile: function (element) {
                 // Use the compile function from the RecursionHelper,
                 // And return the linking function(s) which it returns
-                return RecursionHelper.compile(element);
+                return RecursionHelper.compile(element, undefined, cache);
+
             }
         };
     })

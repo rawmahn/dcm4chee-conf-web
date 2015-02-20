@@ -52,14 +52,14 @@
             <id>asb</id>
             <properties>
                 <config.classifier>-asb</config.classifier>
-                <classifier>-asb</classifier>
+                <classifier>asb</classifier>
             </properties>
         </profile>
 
         <profile>
             <id>arc</id>
             <properties>
-                <classifier>-arc</classifier>
+                <classifier>arc</classifier>
             </properties>
         </profile>
 
@@ -67,7 +67,7 @@
             <id>xds</id>
             <properties>
                 <config.classifier>-xds</config.classifier>
-                <classifier>-xds</classifier>
+                <classifier>xds</classifier>
             </properties>
         </profile>
 

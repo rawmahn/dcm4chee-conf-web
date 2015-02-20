@@ -208,7 +208,7 @@ appCommon.factory('RecursionHelper', ['$compile', function($compile){
          * @param [link] A post-link function, or an object with function(s) registered via pre and post properties.
          * @returns An object containing the linking functions.
          */
-        compile: function(element, link){
+        compile: function(element, link, cache){
             // Normalize the link parameter
             if(angular.isFunction(link)){
                 link = { post: link };
@@ -224,11 +224,11 @@ appCommon.factory('RecursionHelper', ['$compile', function($compile){
                  */
                 post: function(scope, element){
                     // Compile the contents
-                    if(!compiledContents){
-                        compiledContents = $compile(contents);
-                    }
+                    if(!cache.compiledContents){
+                        cache.compiledContents = $compile(contents);
+                    };
                     // Re-add the compiled contents to the element
-                    compiledContents(scope, function(clone){
+                    cache.compiledContents(scope, function(clone){
                         element.append(clone);
                     });
 

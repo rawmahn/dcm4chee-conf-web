@@ -29,10 +29,9 @@
                 "Show all "+schema.class+" properties..."}}
             </a>
         </div>
-        <div class="form-horizontal" ng-if="confignode">
-            <h2>{{schema.class}}</h2>
+        <div class="form-horizontal" ng-if="!confignode">
+            <h3>{{schema.class}} is not set. <a href="" ng-click="parentnode[index] = ConfigEditorService.createNewItem(schema);ConfigEditorService.checkModified() ">Add {{schema.class}}</a></h3>
         </div>
-
     </div>
 </div>
 

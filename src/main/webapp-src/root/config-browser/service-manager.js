@@ -249,7 +249,7 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
             // returns a properly editable object for specified schema
             createNewItem: function (schema) {
                 var createNewBasicItem = function (schema) {
-                    if (schema.default)
+                    if (schema.default != null)
                         return schema.default;
 
                     if (schema.type == "string") return "";

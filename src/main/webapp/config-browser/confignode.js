@@ -13,6 +13,7 @@ angular.module('dcm4che.config.core', [])
             },
             controller: function ($scope) {
 
+                $scope.hasType = ConfigEditorService.hasType;
 
                 $scope.ConfigEditorService = ConfigEditorService;
 
@@ -32,17 +33,18 @@ angular.module('dcm4che.config.core', [])
                 $scope.$watch('confignode', function () {
                     // normalize a bit if this is an object
                     // initialize the properties of this object which are arrays,maps, and objects with empty values
-                    if ($scope.schema && $scope.schema.type == 'object' && $scope.schema.class != 'Map' && $scope.confignode) {
+                    //if ($scope.schema && $scope.schema.type == 'object' && $scope.schema.class != 'Map' && $scope.confignode) {
+                    //
+                    //    angular.forEach($scope.schema.properties, function (value, key) {
+                    //        if (!_.has($scope.confignode, key))
+                    //            if (value.type === 'object' ||
+                    //                value.type === 'array') {
+                    //
+                    //                $scope.confignode[key] = ConfigEditorService.createNewItem(value);
+                    //            }
+                    //    });
+                    //}
 
-                        angular.forEach($scope.schema.properties, function (value, key) {
-                            if (!_.has($scope.confignode, key))
-                                if (value.type === 'object' ||
-                                    value.type === 'array') {
-
-                                    $scope.confignode[key] = ConfigEditorService.createNewItem(value);
-                                }
-                        });
-                    }
 
                 });
 
@@ -69,7 +71,26 @@ angular.module('dcm4che.config.core', [])
                             title: ($scope.schema.description ? $scope.schema.description + "<br/>" : "") +
                             ($scope.schema.default ? "Default: <strong>" + $scope.schema.default + "</strong>" : "")
 
+                        };
+
+                    // enums
+                    if ($scope.hasType($scope.schema, "enum")) {
+
+                        $scope.enums = _.map($scope.schema.enum, function (val, ind) {
+                            return {
+                                value: val,
+                                label: $scope.schema.enumRepresentation=='ORDINAL' ? $scope.schema.enumStrValues[ind] : val
+                            };
+                        });
+
+                        if ($scope.hasType($scope.schema, "null")) {
+                            $scope.enums.unshift({
+                                value: null,
+                                label: "- none -"
+                            });
                         }
+                    }
+
                 });
 
 
@@ -91,7 +112,7 @@ angular.module('dcm4che.config.core', [])
             if ($scope.schema) {
                 $scope.groups = _.chain($scope.schema.properties)
                     .map(function (prop, name) {
-                        if ($scope.options && $scope.options.excludeProps && _.contains($scope.options.excludeProps,name)) return null;
+                        if ($scope.options && $scope.options.excludeProps && _.contains($scope.options.excludeProps, name)) return null;
                         if (prop.uiGroup) return prop.uiGroup; else return null;
                     })
                     .uniq().without(null).value();

@@ -190,9 +190,8 @@ public class ConfigRESTServicesServlet {
         }
 
         // for local Archive
-        reconfigureAtURL(ctx, null, "/");
-
-
+        Response response = reconfigureAtURL(ctx, "dcm4chee-arc", "/");
+        log.info("Archive reconfiguration response = {}", response);
 
         return Response.ok().build();
     }
@@ -311,7 +310,7 @@ public class ConfigRESTServicesServlet {
         return reconfigureAtURL(ctx, extension, connectedDeviceUrl);
     }
 
-    private Response reconfigureAtURL(UriInfo ctx, String extension, String connectedDeviceUrl) throws ConfigurationException {
+    private Response reconfigureAtURL(UriInfo ctx, String prefix, String connectedDeviceUrl) throws ConfigurationException {
         if (!connectedDeviceUrl.startsWith("http")) {
             URL url = null;
             try {
@@ -332,12 +331,12 @@ public class ConfigRESTServicesServlet {
 
         // // figure out the URL for reloading the config
 
-        // add extension part if needed
+        // add prefix part if needed
         String ext_path = "";
-        if (extension != null) {
-            ext_path = XDS_REST_PATH.get(extension);
+        if (prefix != null) {
+            ext_path = XDS_REST_PATH.get(prefix);
             if (ext_path == null)
-                throw new ConfigurationException(String.format("Extension not recognized (%s)", extension));
+                throw new ConfigurationException(String.format("Extension not recognized (%s)", prefix));
         }
 
         String reconfUrl = connectedDeviceUrl + (connectedDeviceUrl.endsWith("/") ? "" : "/") + ext_path + (ext_path.equals("") ? "" : "/") + "ctrl/reload";

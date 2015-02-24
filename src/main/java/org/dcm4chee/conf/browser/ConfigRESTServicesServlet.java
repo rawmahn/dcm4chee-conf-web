@@ -189,10 +189,6 @@ public class ConfigRESTServicesServlet {
             log.warn("Error while reloading the configuration for device "+deviceName,e);
         }
 
-        // for local Archive
-        Response response = reconfigureAtURL(ctx, "dcm4chee-arc", "/");
-        log.info("Archive reconfiguration response = {}", response);
-
         return Response.ok().build();
     }
 
@@ -289,11 +285,16 @@ public class ConfigRESTServicesServlet {
     public void reloadAllExtensionsOfDevice(@Context UriInfo ctx,@PathParam("deviceName")  String deviceName) throws ConfigurationException {
         Device device = configurationManager.findDevice(deviceName);
 
+        // xds
         for (DeviceExtension deviceExtension : device.listDeviceExtensions()) {
             String extensionName = deviceExtension.getClass().getSimpleName();
             if (XDS_REST_PATH.get(extensionName)!=null)
                 reconfigureExtension(ctx, deviceName, extensionName);
         }
+
+        // for local Archive
+        Response response = reconfigureAtURL(ctx, "dcm4chee-arc", "/");
+        log.info("Archive reconfiguration response = {}", response.getStatus());
 
     }
 

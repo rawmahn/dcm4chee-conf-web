@@ -307,7 +307,13 @@ public class ConfigRESTServicesServlet {
         if (connectedDeviceUrl == null)
             throw new ConfigurationException("Device "+deviceName+" is not controlled (connected), please inspect the JBoss configuration");
 
-        return reconfigureAtURL(ctx, extension, connectedDeviceUrl);
+        // add prefix part if needed
+        String ext_prefix = "";
+        ext_prefix = XDS_REST_PATH.get(extension);
+        if (ext_prefix == null)
+            throw new ConfigurationException(String.format("Extension not recognized (%s)", ext_prefix));
+
+        return reconfigureAtURL(ctx, ext_prefix, connectedDeviceUrl);
     }
 
     private Response reconfigureAtURL(UriInfo ctx, String prefix, String connectedDeviceUrl) throws ConfigurationException {
@@ -331,15 +337,7 @@ public class ConfigRESTServicesServlet {
 
         // // figure out the URL for reloading the config
 
-        // add prefix part if needed
-        String ext_path = "";
-        if (prefix != null) {
-            ext_path = XDS_REST_PATH.get(prefix);
-            if (ext_path == null)
-                throw new ConfigurationException(String.format("Extension not recognized (%s)", prefix));
-        }
-
-        String reconfUrl = connectedDeviceUrl + (connectedDeviceUrl.endsWith("/") ? "" : "/") + ext_path + (ext_path.equals("") ? "" : "/") + "ctrl/reload";
+        String reconfUrl = connectedDeviceUrl + (connectedDeviceUrl.endsWith("/") ? "" : "/") + prefix + (prefix.equals("") ? "" : "/") + "ctrl/reload";
 
         try {
             URL obj = new URL(reconfUrl);

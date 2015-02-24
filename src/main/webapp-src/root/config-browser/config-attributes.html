@@ -1,32 +1,38 @@
 <!-- Composite (Object) -->
 <div ng-if="schema.type == 'object' &&
-            schema.class != 'Map'" xmlns="http://java.sun.com/jsf/core">
+            schema.class != 'Map'">
 
-    <div class="form-horizontal" ng-controller="CompositeNodeController">
-        <div ng-repeat="group in groups | groupSorter:options">
-            <fieldset>
-                <legend ng-show="options.legend">{{options.legend}}</legend>
-                <legend ng-show="groups.length>1 && !options.legend">{{group}}</legend>
-                <legend ng-show="groups.length==1 && !options.legend">{{schema.class}}<span ng-show="index!=null">({{index}})</span>
-                </legend>
-                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:['uiOrder','title']">
-                    <div confignode="confignode[propertySchema.$key]"
-                         schema="propertySchema"
-                         parentnode="confignode"
-                         index="propertySchema.$key"
-                         editor="editor">
+    <div ng-controller="CompositeNodeController">
+        <div class="form-horizontal" ng-if="confignode">
+            <div ng-repeat="group in groups | groupSorter:options">
+                <fieldset>
+                    <legend ng-show="options.legend">{{options.legend}}</legend>
+                    <legend ng-show="groups.length>1 && !options.legend">{{group}}</legend>
+                    <legend ng-show="groups.length==1 && !options.legend">{{schema.class}}<span ng-show="index!=null">({{index}})</span>
+                    </legend>
+                    <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:['uiOrder','title']">
+                        <div confignode="confignode[propertySchema.$key]"
+                             schema="propertySchema"
+                             parentnode="confignode"
+                             index="propertySchema.$key"
+                             editor="editor">
+                        </div>
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
+
+            <a href=""
+               class="btn btn-default pull-right"
+               ng-click="toggleShowAllProps()"
+               ng-show="isShowAllTogglable">{{doShowAllProps ?
+                "Show only primary "+schema.class+" properties" :
+                "Show all "+schema.class+" properties..."}}
+            </a>
+        </div>
+        <div class="form-horizontal" ng-if="confignode">
+            <h2>{{schema.class}}</h2>
         </div>
 
-        <a href=""
-           class="btn btn-default pull-right"
-           ng-click="toggleShowAllProps()"
-           ng-show="isShowAllTogglable">{{doShowAllProps ?
-            "Show only primary "+schema.class+" properties" :
-            "Show all "+schema.class+" properties..."}}
-        </a>
     </div>
 </div>
 
@@ -35,7 +41,7 @@
      ng-if="schema.type === 'string' ||
      schema.type === 'integer' ||
      schema.type === 'boolean' ||
-     schema.type === 'enum' ||
+     hasType(schema, 'enum') ||
      (schema.type === 'array' && schema.items.type !== 'object') ||
      (schema.class === 'Map' && schema.properties['*'].type !== 'object')">
 
@@ -45,7 +51,7 @@
            data-animation="am-fade-and-scale"
            data-html="true"
            data-delay="200"
-           bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
+           bs-tooltip="propertyTooltip">{{:: schema.title ? schema.title : index}}</label>
 
 
     <div ng-class="(!noLabel ? 'col-sm-8' : 'col-sm-12')">
@@ -62,12 +68,9 @@
         </div>
 
         <!-- enum -->
-        <div ng-if="schema.type === 'enum'">
-            <select ng-if="schema.enumRepresentation=='STRING'" ng-model="parentnode[index]" class="form-control"
-                    ng-options="option for option in schema.enum" ng-change="ConfigEditorService.checkModified()">
-            </select>
-            <select ng-if="schema.enumRepresentation=='ORDINAL'" ng-model="parentnode[index]" class="form-control"
-                    ng-options="option as schema.enumStrValues[option] for option in schema.enum"
+        <div ng-if="hasType(schema, 'enum')">
+            <select ng-model="parentnode[index]" class="form-control"
+                    ng-options="option.value as option.label for option in enums"
                     ng-change="ConfigEditorService.checkModified()">
             </select>
         </div>

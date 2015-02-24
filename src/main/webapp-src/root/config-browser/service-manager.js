@@ -10,7 +10,7 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
 
         function checkModified() {
             $scope.selectedDevice.isModified = !angular.equals($scope.selectedDevice.lastPersistedConfig, $scope.selectedDevice.config);
-        };
+        }
 
         $scope.$on('configurationChanged', function () {
             modifiedChecksTriggered++;
@@ -179,12 +179,16 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
     }
 )
 // 'global' service
-.factory("ConfigEditorService", function ($rootScope, appNotifications, appHttp) {
+    .factory("ConfigEditorService", function ($rootScope, appNotifications, appHttp) {
 
-        var customTypes = ['Device'];
-        var primitiveTypes = ["integer", "string", "boolean"];
-        var collectionTypes = ["array", "Set", "Map"];
-        var nonCompositeTypes = _.union(primitiveTypes, collectionTypes);
+        var hasType = function (schema, type) {
+            if (!schema) return false;
+
+            if (_.isArray(schema.type))
+                return _.contains(schema.type, type);
+            else
+                return schema.type == type;
+        };
 
         var conf = {
 
@@ -202,6 +206,7 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
             deviceRefs: [],
 
             schemas: {},
+
 
             // initializes things
             load: function (callback) {
@@ -238,21 +243,34 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
                 });
             },
 
+            hasType: hasType,
+
+
             // returns a properly editable object for specified schema
             createNewItem: function (schema) {
+                var createNewBasicItem = function (schema) {
+                    if (schema.default)
+                        return schema.default;
 
-                if (schema.type != "object") return null;
+                    if (schema.type == "string") return "";
+                    if (schema.type == "integer") return 0;
+                    if (hasType(schema, "enum")) return null;
+                    if (schema.type == "array") return [];
+                };
 
+                if (schema.type != "object")
+                    return createNewBasicItem(schema);
+
+                // then it's an object
                 var df = schema.distinguishingField ? schema.distinguishingField : 'cn';
-
                 var obj = {};
+
                 angular.forEach(schema.properties, function (value, index) {
-                    if (value.type == "object")
-                        obj[index] = {}; else if (value.type == "array")
-                        obj[index] = []; else if (index == df)
-                        obj[index] = "new"; else if (value.default)
-                        obj[index] = value.default;
+                    if (index == df) obj[index] = "new";
+                    else
+                        obj[index] = createNewBasicItem(value);
                 });
+
                 return obj;
             },
 

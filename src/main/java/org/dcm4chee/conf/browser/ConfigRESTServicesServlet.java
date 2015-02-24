@@ -39,6 +39,24 @@ public class ConfigRESTServicesServlet {
         UNSUPPORTED
     }
 
+    // Archive
+    private static final String DEVICE_NAME_PROPERTY =
+            "org.dcm4chee.archive.deviceName";
+    private static final String DEF_DEVICE_NAME =
+            "dcm4chee-arc";
+
+    // XDS
+    public static final Map<String, String> XDS_REST_PATH = new HashMap<>();
+    static {
+        XDS_REST_PATH.put("StorageConfiguration", "xds-rep-rs");
+        XDS_REST_PATH.put("XdsRegistry", "xds-reg-rs");
+        XDS_REST_PATH.put("XdsRepository", "xds-rep-rs");
+        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xcai-rs");
+        XDS_REST_PATH.put("XCAiRespondingGWCfg", "xcai-rs");
+        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
+        XDS_REST_PATH.put("XCARespondingGWCfg", "xca-rs");
+    }
+
 
     public class DeviceJSON {
 
@@ -163,12 +181,18 @@ public class ConfigRESTServicesServlet {
 
         configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
 
+        // for XDS
         try {
             reloadAllExtensionsOfDevice(ctx, deviceName);
             log.info("Configuration for device {} stored successfully",deviceName);
         } catch (ConfigurationException e) {
             log.warn("Error while reloading the configuration for device "+deviceName,e);
         }
+
+        // for local Archive
+        reconfigureAtURL(ctx, null, "/");
+
+
 
         return Response.ok().build();
     }
@@ -194,7 +218,6 @@ public class ConfigRESTServicesServlet {
         for (Class<? extends HL7ApplicationExtension> hl7Ext : configurationManager.getDicomConfigurationExtension(HL7Configuration.class).getRegisteredHL7ApplicationExtensions())
             schemas.aeExtensions.put(hl7Ext.getSimpleName(), getSchemaForConfigurableClass(hl7Ext));
 
-        // TODO: PERFORMANCE: cache schemas
         return schemas;
     }
 
@@ -262,18 +285,6 @@ public class ConfigRESTServicesServlet {
 
     }
 
-    public static final Map<String, String> XDS_REST_PATH = new HashMap<>();
-
-    static {
-        XDS_REST_PATH.put("StorageConfiguration", "xds-rep-rs");
-        XDS_REST_PATH.put("XdsRegistry", "xds-reg-rs");
-        XDS_REST_PATH.put("XdsRepository", "xds-rep-rs");
-        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xcai-rs");
-        XDS_REST_PATH.put("XCAiRespondingGWCfg", "xcai-rs");
-        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
-        XDS_REST_PATH.put("XCARespondingGWCfg", "xca-rs");
-    }
-
     @GET
     @Path("/reconfigure-all-extensions/{deviceName}")
     public void reloadAllExtensionsOfDevice(@Context UriInfo ctx,@PathParam("deviceName")  String deviceName) throws ConfigurationException {
@@ -284,7 +295,6 @@ public class ConfigRESTServicesServlet {
             if (XDS_REST_PATH.get(extensionName)!=null)
                 reconfigureExtension(ctx, deviceName, extensionName);
         }
-
 
     }
 
@@ -298,6 +308,10 @@ public class ConfigRESTServicesServlet {
         if (connectedDeviceUrl == null)
             throw new ConfigurationException("Device "+deviceName+" is not controlled (connected), please inspect the JBoss configuration");
 
+        return reconfigureAtURL(ctx, extension, connectedDeviceUrl);
+    }
+
+    private Response reconfigureAtURL(UriInfo ctx, String extension, String connectedDeviceUrl) throws ConfigurationException {
         if (!connectedDeviceUrl.startsWith("http")) {
             URL url = null;
             try {
@@ -316,16 +330,17 @@ public class ConfigRESTServicesServlet {
         }
 
 
-        // figure out the URL for reloading the config
-        String ext_path = XDS_REST_PATH.get(extension);
-        if (ext_path == null)
-            throw new ConfigurationException(String.format("Extension not recognized (%s)", extension));
+        // // figure out the URL for reloading the config
 
+        // add extension part if needed
+        String ext_path = "";
+        if (extension != null) {
+            ext_path = XDS_REST_PATH.get(extension);
+            if (ext_path == null)
+                throw new ConfigurationException(String.format("Extension not recognized (%s)", extension));
+        }
 
-        String reconfUrl = connectedDeviceUrl + (connectedDeviceUrl.endsWith("/")?"":"/") + ext_path + "/ctrl/reload";
-
-
-
+        String reconfUrl = connectedDeviceUrl + (connectedDeviceUrl.endsWith("/") ? "" : "/") + ext_path + (ext_path.equals("") ? "" : "/") + "ctrl/reload";
 
         try {
             URL obj = new URL(reconfUrl);

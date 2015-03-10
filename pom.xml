@@ -49,10 +49,10 @@
     </properties>
     <profiles>
         <profile>
-            <id>asb</id>
+            <id>xds-asb</id>
             <properties>
-                <config.classifier>-asb</config.classifier>
-                <classifier>asb</classifier>
+                <config.classifier>-xds-asb</config.classifier>
+                <classifier>xds-asb</classifier>
             </properties>
         </profile>
 

@@ -31,7 +31,7 @@
     <artifactId>dcm4chee-conf-web</artifactId>
     <packaging>war</packaging>
     <name>Web admin for dcm4chee (configuration manager)</name>
-    <version>1.0.0.beta.v20150310_1232</version>
+    <version>1.0.0.beta.v20150323_1027</version>
     <properties>
         <dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
         <serviceManager.enabled>true</serviceManager.enabled>

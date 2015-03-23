@@ -166,8 +166,12 @@ public class ConfigRESTServicesServlet {
         return (Map<String, Object>) configurationManager.getConfigurationStorage().getConfigurationNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), Device.class);
     }
 
-
-
+    @DELETE
+    @Path("/device/{deviceName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void deleteDevice(@PathParam(value = "deviceName") String deviceName) throws ConfigurationException {
+        configurationManager.getConfigurationStorage().removeNode(DicomPath.DeviceByName.set("deviceName",deviceName).path());
+    }
 
 
     @POST
